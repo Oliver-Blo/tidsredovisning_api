@@ -54,11 +54,11 @@ try{
             $retur .= "<p class='error'>TOM aktivitet!</p>";
         
         }
-    }catch(Exception $ex){
-        $retur .="<p class='error'>Något gick fel, meddelandet säger:<br>{$ex->getMessage()}</p>";
-    
     }
         
+}
+catch(Exception $ex){
+    $retur .="<p class='error'>Något gick fel, meddelandet säger:<br>{$ex->getMessage()}</p>";
 }
     return $retur;
 }
@@ -69,8 +69,39 @@ try{
  */
 function test_HamtaEnAktivitet(): string {
     $retur = "<h2>test_HamtaEnAktivitet</h2>";
-    $retur .= "<p class='ok'>Testar hämta en aktivitet</p>";
-    $retur .= "<p class='error'>Det här testet gick fel!</p>";
+    try{
+        //Testa negativt tal
+        $svar=hamtaEnskild(-1);
+        if($svar->getStatus()===400){
+            $retur .= "<p class='ok'>Hämta eskild med negativt tal ger förväntat svar 400</p>";
+        }else{
+            $retur .= "<p class='error'>Hämta eskild med negativt tal ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
+        }
+        //Testa för stort tal
+        $svar=hamtaEnskild(100);
+        if($svar->getStatus()===400){
+            $retur .= "<p class='ok'>Hämta eskild med stort tal ger förväntat svar 400</p>";
+        }else{
+            $retur .= "<p class='error'>Hämta eskild med stort (100) tal ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
+        }
+        //Testa bokstäver
+        $svar=hamtaEnskild((int)"sju");
+        if($svar->getStatus()===400){
+            $retur .= "<p class='ok'>Hämta eskild med bokstäver ger förväntat svar 400</p>";
+        }else{
+            $retur .= "<p class='error'>Hämta eskild med bokstäver (sju) ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
+        }
+        //Testa giltigt tal
+        $svar=hamtaEnskild(3);
+        if($svar->getStatus()===200){
+            $retur .= "<p class='ok'>Hämta eskild med 3 ger förväntat svar 400</p>";
+        }else{
+            $retur .= "<p class='error'>Hämta eskild med 3 ger {$svar->getStatus()} " . "inte förväntat svar 200</p>";
+        }
+    }catch(Exception $ex){
+        $retur .="<p class='error'>Något gick fel, meddelandet säger:<br>{$ex->getMessage()}</p>";
+    
+    }
     return $retur;
 }
 
