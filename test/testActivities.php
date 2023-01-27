@@ -39,7 +39,7 @@ function testActivityFunction(string $funktion): string {
 function test_HamtaAllaAktiviteter(): string {
     $retur="<h2>test_HamtaAllaAktiviteter</h2>";
 try{
-    $svar=hamtaAlla();
+    $svar=hamtaAllaAktivitet();
 
     //Kontrollera statuskoden
     if(!$svar->getStatus()===200){
@@ -48,14 +48,17 @@ try{
         $retur .="<p class='ok'>Korrekt statuskod 200</p>";
     }
     
-    //Kontrollerar att ingen aktivitet är tom
-    foreach($svar->getContent() as $kategori){
-        if($kategori->Kategori===""){
-            $retur .= "<p class='error'>TOM aktivitet!</p>";
-        
+    //Kontrollerar egenskaperna
+    foreach($svar->getContent()->activities as $kategori){
+        if(!isset($kategori->id)) {
+            $retur .="<p class='error'>Egenskapen id saknas</p>";
+            break;
+        }
+        if(!isset($kategori->activity)) {
+            $retur .="<p class='error'>Egenskapen activity saknas</p>";
+            break;
         }
     }
-        
 }
 catch(Exception $ex){
     $retur .="<p class='error'>Något gick fel, meddelandet säger:<br>{$ex->getMessage()}</p>";
@@ -71,28 +74,28 @@ function test_HamtaEnAktivitet(): string {
     $retur = "<h2>test_HamtaEnAktivitet</h2>";
     try{
         //Testa negativt tal
-        $svar=hamtaEnskild(-1);
+        $svar=hamtaEnskildAktivitet(-1);
         if($svar->getStatus()===400){
             $retur .= "<p class='ok'>Hämta eskild med negativt tal ger förväntat svar 400</p>";
         }else{
             $retur .= "<p class='error'>Hämta eskild med negativt tal ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
         }
         //Testa för stort tal
-        $svar=hamtaEnskild(100);
+        $svar=hamtaEnskildAktivitet(100);
         if($svar->getStatus()===400){
             $retur .= "<p class='ok'>Hämta eskild med stort tal ger förväntat svar 400</p>";
         }else{
             $retur .= "<p class='error'>Hämta eskild med stort (100) tal ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
         }
         //Testa bokstäver
-        $svar=hamtaEnskild((int)"sju");
+        $svar=hamtaEnskildAktivitet((int)"sju");
         if($svar->getStatus()===400){
             $retur .= "<p class='ok'>Hämta eskild med bokstäver ger förväntat svar 400</p>";
         }else{
             $retur .= "<p class='error'>Hämta eskild med bokstäver (sju) ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
         }
         //Testa giltigt tal
-        $svar=hamtaEnskild(3);
+        $svar=hamtaEnskildAktivitet(3);
         if($svar->getStatus()===200){
             $retur .= "<p class='ok'>Hämta eskild med 3 ger förväntat svar 400</p>";
         }else{
@@ -134,7 +137,7 @@ function test_RaderaAktivitet(): string {
     $retur = "<h2>test_RaderaAktivitet</h2>";
     try{
     //Testa felaktigt id(-1)
-        $svar=radera(-1);
+        $svar=raderaAktivitet(-1);
         if($svar->getStatus() === 400) {
             $retur .= "<p class='ok'>Radera post med negativt tal ger förväntat svar 400</p>";
         }else {
@@ -142,7 +145,7 @@ function test_RaderaAktivitet(): string {
                 . "inte förväntat svar 400</p>";
         }
     //Testa felaktigt id(sju)
-    $svar=radera((int)"sju");
+    $svar=raderaAktivitet((int)"sju");
     if($svar->getStatus() === 400) {
         $retur .= "<p class='ok'>Radera post med felaktigt id ('sju') ger förväntat svar 400</p>";
     }else {
@@ -150,7 +153,7 @@ function test_RaderaAktivitet(): string {
             . "inte förväntat svar 400</p>";
     }
     //Testa id som inte finns(100)
-    $svar=radera(100);
+    $svar=raderaAktivitet(100);
     if($svar->getStatus() === 200 && $svar->getContent()->result===false) {
         $retur .= "<p class='ok'>Radera post med id som inte finns ('100') ger förväntat svar 200</p>";
     }else {
@@ -160,12 +163,12 @@ function test_RaderaAktivitet(): string {
     //Testa radera nyskapat id
     $db=connectDb();
     $db->beginTransaction();
-    $nyPost=sparaNy("Nizze");
+    $nyPost=sparaNyAktivitet("Nizze");
     if($nyPost->getStatus() !== 200){
         throw new Exception("Skapa ny post misslyckades", 10001);
     }
     $nyttId=(int) $nyPost->getContent()->id;
-    $svar=radera($nyttId);
+    $svar=raderaAktivitet($nyttId);
 
     if($svar->getStatus() === 200 && $svar->getContent()->result===true) {
         $retur .= "<p class='ok'>Radera post med nyskapat id ger förväntat svar 200</p>";
