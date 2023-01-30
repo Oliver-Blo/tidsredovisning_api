@@ -37,13 +37,13 @@ function getRoute(string $querystring, RequestMethod $method = RequestMethod::GE
     if ($method === RequestMethod::POST) {
         if (isset($_POST["action"]) && $_POST["action"] === "delete") {
             $metod = RequestMethod::DELETE;
-        } elseif (isset($_POST["action"]) && $_POST["action"] === "save" && count($params) > 0) {
+        } elseif (isset($_POST["action"]) && $_POST["action"] === "save" && count($parametrar) > 0) {
             $metod = RequestMethod::PUT;
         }
     } else {
-        $metod = RequestMethod::GET;
+        $method = RequestMethod::GET;
     }
 
     // Skapa och returnera ett Route-objekt
-    return new Route($rutt, $parametrar, $metod);
+    return new Route($rutt, $parametrar, $method);
 }
