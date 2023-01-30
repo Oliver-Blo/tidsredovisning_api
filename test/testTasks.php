@@ -176,8 +176,41 @@ function test_HamtaAllaUppgifterDatum(): string {
  */
 function test_HamtaEnUppgift(): string {
     $retur = "<h2>test_HamtaEnUppgift</h2>";
-    $retur .= "<p class='ok'>Testar hämta en uppgift</p>";
+    try{
+        //Testa negativt tal
+        $svar=hamtaEnskildUppgift(-1);
+        if($svar->getStatus()===400){
+            $retur .= "<p class='ok'>Hämta eskild med negativt tal ger förväntat svar 400</p>";
+        }else{
+            $retur .= "<p class='error'>Hämta eskild med negativt tal ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
+        }
+        //Testa för stort tal
+        $svar=hamtaEnskildUppgift(100);
+        if($svar->getStatus()===400){
+            $retur .= "<p class='ok'>Hämta eskild med stort tal ger förväntat svar 400</p>";
+        }else{
+            $retur .= "<p class='error'>Hämta eskild med stort (100) tal ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
+        }
+        //Testa bokstäver
+        $svar=hamtaEnskildUppgift((int)"sju");
+        if($svar->getStatus()===400){
+            $retur .= "<p class='ok'>Hämta eskild med bokstäver ger förväntat svar 400</p>";
+        }else{
+            $retur .= "<p class='error'>Hämta eskild med bokstäver (sju) ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
+        }
+        //Testa giltigt tal
+        $svar=hamtaEnskildUppgift(3);
+        if($svar->getStatus()===200){
+            $retur .= "<p class='ok'>Hämta eskild med 3 ger förväntat svar 400</p>";
+        }else{
+            $retur .= "<p class='error'>Hämta eskild med 3 ger {$svar->getStatus()} " . "inte förväntat svar 200</p>";
+        }
+    }catch(Exception $ex){
+        $retur .="<p class='error'>Något gick fel, meddelandet säger:<br>{$ex->getMessage()}</p>";
+    
+    }
     return $retur;
+    
 }
 
 /**
