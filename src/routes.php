@@ -23,22 +23,23 @@ function getRoute(string $querystring, RequestMethod $method = RequestMethod::GE
         case 0:
         case 1:
         case 2:
+        case 3:
             $rutt = "/";
             break;
-        case 3:
-            $rutt = "/{$uri[2]}/";
+        case 4:
+            $rutt = "/{$uri[3]}/";
             break;
         default :
-            $rutt = "/{$uri[2]}/";
-            $parametrar = array_slice($uri, 3);
+            $rutt = "/{$uri[3]}/";
+            $parametrar = array_slice($uri, 4);
     }
 
     // Kontrollera inskickad metod och läs av eventuell $_POST[action]
     if ($method === RequestMethod::POST) {
         if (isset($_POST["action"]) && $_POST["action"] === "delete") {
-            $metod = RequestMethod::DELETE;
+            $method = RequestMethod::DELETE;
         } elseif (isset($_POST["action"]) && $_POST["action"] === "save" && count($parametrar) > 0) {
-            $metod = RequestMethod::PUT;
+            $method = RequestMethod::PUT;
         }
     } else {
         $method = RequestMethod::GET;
