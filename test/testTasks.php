@@ -184,6 +184,7 @@ function test_HamtaEnUppgift(): string {
         }else{
             $retur .= "<p class='error'>Hämta eskild med negativt tal ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
         }
+
         //Testa för stort tal
         $svar=hamtaEnskildUppgift(100);
         if($svar->getStatus()===400){
@@ -191,6 +192,7 @@ function test_HamtaEnUppgift(): string {
         }else{
             $retur .= "<p class='error'>Hämta eskild med stort (100) tal ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
         }
+
         //Testa bokstäver
         $svar=hamtaEnskildUppgift((int)"sju");
         if($svar->getStatus()===400){
@@ -198,6 +200,7 @@ function test_HamtaEnUppgift(): string {
         }else{
             $retur .= "<p class='error'>Hämta eskild med bokstäver (sju) ger {$svar->getStatus()} " . "inte förväntat svar 400</p>";
         }
+
         //Testa giltigt tal
         $svar=hamtaEnskildUppgift(3);
         if($svar->getStatus()===200){

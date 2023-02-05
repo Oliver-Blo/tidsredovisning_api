@@ -332,34 +332,37 @@ function raderaUppgift(int $id): Response {
 
 function kontrolleraIndata(array $postData):string {
     try {
-        //Kontrollera giltigt datum
+        // Kontrollera giltigt datum
         if(!isset($postData["date"])) {
             return "Datum saknas (date)";
         }
-        $datum=DateTimeImmutable::createFromFormat("Y-m-d", $postData["date"]);
+        $datum= DateTimeImmutable::createFromFormat("Y-m-d", $postData["date"]);
         if(!$datum || $datum->format('Y-m-d')>date("Y-m-d")) {
             return "Ogiltigt datum (date)";
         }
-
-        //Kontrollera giltig tid
+        // Kontrollera giltig tid
         if(!isset($postData["time"])) {
             return "Tid saknas (time)";
         }
-        $tid=DateTimeImmutable::createFromFormat("H:i", $postData["time"]);
+        $tid= DateTimeImmutable::createFromFormat("H:i", $postData["time"]);
         if(!$tid || $tid->format("H:i")>"08:00") {
-            return "Ogitlig tid (time)";
+            return "Ogiltig tid (time)";
         }
-        //Kontrollera aktivitetsid
-        $aktivitetsId=filter_var($postData["activityId"], FILTER_VALIDATE_INT);
+        // Kontrollera aktivitetsid
+        if(!isset($postData["activityId"])) {
+            return "Aktivitetsid (activityId) saknas";
+        }
+        $aktivitetsId= filter_var($postData["activityId"], FILTER_VALIDATE_INT);
         if(!$aktivitetsId || $aktivitetsId<1) {
             return "Ogiltigt aktivitetsid (activityId)";
         }
-        $svar=hamtaEnskildAktivitet($aktivitetsId);
+        $svar= hamtaEnskildAktivitet($aktivitetsId);
         if($svar->getStatus()!==200) {
             return "Angivet aktivitetsid saknas";
         }
         return "";
-    }catch (Exception $exc) {
+    } catch (Exception $exc) {
         return $exc->getMessage();
     }
+
 }
